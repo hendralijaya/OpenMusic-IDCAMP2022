@@ -2,7 +2,6 @@ const { Pool } = require('pg');
 const { nanoid } = require('nanoid');
 const InvariantError = require('../../exceptions/InvariantError');
 const NotFoundError = require('../../exceptions/NotFoundError');
-const { songsModel } = require('../../utils/model');
 
 class AlbumsService {
   constructor() {
@@ -40,19 +39,19 @@ class AlbumsService {
 
   async getSongByAlbumId(album) {
     const query = {
-      text: 'SELECT * FROM songs WHERE album_id = $1',
+      text: `SELECT songs.id, songs.title, songs.year, songs.genre, songs.performer, songs.duration FROM songs LEFT JOIN albums ON songs.album_id = albums.id 
+      WHERE songs.album_id = $1 OR albums.id = $1 GROUP BY songs.id`,
       values: [album.id],
     };
-    let resultSongs = await this._pool.query(query);
+    const resultSongs = await this._pool.query(query);
     if (!resultSongs.rows.length) {
       return null;
     }
-    resultSongs = resultSongs.rows.map(songsModel);
     const result = {
       id: album.id,
       name: album.name,
       year: album.year,
-      songs: resultSongs,
+      songs: resultSongs.rows,
     };
     return result;
   }
