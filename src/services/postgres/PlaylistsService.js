@@ -20,10 +20,10 @@ class playlistsService {
     return result.rows[0].id;
   }
 
-  async getPlaylistById(owner, id) {
+  async getPlaylistById(id) {
     const query = {
-      text: 'SELECT playlists.id, playlists.name, users.username FROM playlists LEFT JOIN users ON playlists.owner = users.id WHERE playlists.owner = $1 AND playlists.id = $2',
-      values: [owner, id],
+      text: 'SELECT playlists.id, playlists.name, users.username FROM playlists LEFT JOIN users ON playlists.owner = users.id WHERE playlists.id = $1',
+      values: [id],
     };
     const result = await this._pool.query(query);
     if (!result.rows.length) {
@@ -34,7 +34,7 @@ class playlistsService {
 
   async getPlaylists(owner) {
     const query = {
-      text: 'SELECT playlists.id, playlists.name, users.username FROM playlists LEFT JOIN users ON playlists.owner = users.id WHERE playlists.owner = $1',
+      text: 'SELECT playlists.id AS id, playlists.name AS name, users.username AS username FROM playlists LEFT JOIN users ON playlists.owner = users.id WHERE playlists.owner = $1 UNION SELECT playlists.id AS id, playlists.name AS name, users.username AS username FROM collaborations LEFT JOIN playlists ON collaborations.playlist_id = playlists.id LEFT JOIN users ON playlists.owner = users.id WHERE collaborations.user_id = $1',
       values: [owner],
     };
     const result = await this._pool.query(query);

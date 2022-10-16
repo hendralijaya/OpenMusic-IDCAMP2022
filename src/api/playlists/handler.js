@@ -30,10 +30,10 @@ class PlaylistsHandler {
   }
 
   async getPlaylistSongsByIdHandler(request, h) {
-    const { id } = request.params;
+    const { id: playlistId } = request.params;
     const { id: credentialId } = request.auth.credentials;
-    await this._service.verifyPlaylistAccess(id, credentialId);
-    const playlist = await this._service.getPlaylistById(credentialId, id);
+    await this._service.verifyPlaylistAccess(playlistId, credentialId);
+    const playlist = await this._service.getPlaylistById(playlistId);
     const data = await this._service.getSongsByPlaylistId(playlist);
     return successResponse(h, {
       responseData: { playlist: data },
