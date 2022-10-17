@@ -1,7 +1,3 @@
-/* eslint-disable camelcase */
-
-exports.shorthands = undefined;
-
 exports.up = (pgm) => {
   pgm.createTable('playlist_song_activities', {
     id: {
@@ -29,6 +25,7 @@ exports.up = (pgm) => {
     time: {
       type: 'TIMESTAMP',
       notNull: true,
+      default: pgm.func('current_timestamp'),
     },
   });
 };

@@ -26,9 +26,7 @@ class SongsService {
     return result.rows[0].id;
   }
 
-  async getSongs({
-    title, performer,
-  }) {
+  async getSongs({ title = '', performer = '' }) {
     title = title == null ? '' : title;
     performer = performer == null ? '' : performer;
     const query = {
