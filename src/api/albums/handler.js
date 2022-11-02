@@ -1,5 +1,5 @@
 const autoBind = require('auto-bind');
-const { successResponse } = require('../../utils/responses');
+const { successResponse, cacheSuccessResponse } = require('../../utils/responses');
 
 class AlbumsHandler {
   constructor(service, validator) {
@@ -44,6 +44,36 @@ class AlbumsHandler {
     const { id } = request.params;
     await this._service.deleteAlbumById(id);
     return successResponse(h, { responseMessage: 'Album berhasil dihapus', responseCode: 200 });
+  }
+
+  async getAlbumLikesByIdHandler(request, h) {
+    const { id } = request.params;
+    const { likes, cache } = await this._service.getAlbumsLikesById(id);
+    if (cache) {
+      return cacheSuccessResponse(h, {
+        responseData: {
+          likes,
+        },
+      });
+    }
+    return successResponse(h, {
+      responseData: {
+        likes,
+      },
+    });
+  }
+
+  async postAlbumLikesByIdHandler(request, h) {
+    const { id } = request.params;
+    const { id: credentialId } = request.auth.credentials;
+    await this._service.getAlbumById(id);
+    const like = await this._service.checkAlbumAlreadyLiked(credentialId, id);
+    if (like) {
+      await this._service.deleteAlbumLikesById(credentialId, id);
+      return successResponse(h, { responseMessage: 'Like berhasil dihapus', responseCode: 201 });
+    }
+    await this._service.addAlbumLikesById(credentialId, id);
+    return successResponse(h, { responseMessage: 'Like berhasil ditambahkan', responseCode: 201 });
   }
 }
 

@@ -13,4 +13,17 @@ const songModel = ({
   performer,
   duration,
 });
-module.exports = { songModel };
+
+const albumModel = ({
+  id,
+  name,
+  year,
+  cover,
+}) => ({
+  id,
+  name,
+  year,
+  coverUrl: cover,
+});
+
+module.exports = { songModel, albumModel };

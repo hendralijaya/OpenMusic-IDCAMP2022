@@ -19,6 +19,19 @@ const routes = (handler) => [
     path: '/albums/{id}',
     handler: handler.deleteAlbumByIdHandler,
   },
+  {
+    method: 'GET',
+    path: '/albums/{id}/likes',
+    handler: handler.getAlbumLikesByIdHandler,
+  },
+  {
+    method: 'POST',
+    path: '/albums/{id}/likes',
+    handler: handler.postAlbumLikesByIdHandler,
+    options: {
+      auth: 'songsapp_jwt',
+    },
+  },
 ];
 
 module.exports = routes;
